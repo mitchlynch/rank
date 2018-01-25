@@ -11,11 +11,11 @@ import registerServiceWorker from './registerServiceWorker';
 
 const reduxState = loadReduxState();
 const store = configureStore(reduxState);
-store.subscribe(throttle(() => {
-    setDataInSessionStorage({
-        reduxState: store.getState()
-    });
-}, 1000));
+// store.subscribe(throttle(() => {
+//     setDataInSessionStorage({
+//         reduxState: store.getState()
+//     });
+// }, 1000));
 
 render(
     <Provider store={store}>

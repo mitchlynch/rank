@@ -1,6 +1,8 @@
 import * as types from '../actions/actionTypes';
-//import {get, post}  from '../xhr/sessionXhr';
+import {browserHistory} from 'react-router';
+import {RANK_BOARDS} from '../constants/routeConstants';
 import {getApplicationSessionFromState} from '../selectors/applicationSessionSelector';
+import moment from 'moment';
 
 const _updateState = (data) => {
     return _dispatchSuccess(types.UPDATE_SESSION, data);
@@ -13,14 +15,13 @@ const _dispatchSuccess = (type, payload) => {
     };
 };
 
-const getNewSession = () => {
-    //TODO: update username to be entered from form
+const startNewSession = (data) => {
     return (dispatch) => {
         dispatch(
             {
                 type: 'socketio/sessionStart',
                 payload: {
-                    userName: 'Mitch'
+                    userName: data.userName
                 }
             }
         );
@@ -38,6 +39,41 @@ const getNewSession = () => {
                 payload: {}
             }
         );
+
+        browserHistory.push(RANK_BOARDS);
+    };
+};
+
+const reconnectSession = (lastUpdated) => {
+    return (dispatch) => {
+        dispatch(
+            {
+                type: 'socketio/subscribeToBoards',
+                payload: {
+                    lastUpdated: lastUpdated
+                }
+            }
+        );
+
+        dispatch(
+            {
+                type: 'socketio/subscribeToResponses',
+                payload: {
+                    lastUpdated: lastUpdated
+                }
+            }
+        );
+    };
+};
+
+const updateConnectionStatus = (data) => {
+    return (dispatch, getState) => {
+        if(data.connectionState === 'Offline') {
+            data.lastUpdated = moment().unix();
+        }
+
+        return dispatch(updateSessionState(data));
+
     };
 };
 
@@ -67,7 +103,9 @@ const updateSession = (data) => {
 };
 
 export {
-    getNewSession,
+    startNewSession,
+    reconnectSession,
     updateSession,
-    updateSessionState
+    updateSessionState,
+    updateConnectionStatus
 };

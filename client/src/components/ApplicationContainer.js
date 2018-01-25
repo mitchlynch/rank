@@ -7,6 +7,7 @@ import Application from './Application';
 import * as sessionActions from '../actions/sessionActions';
 import * as rankBoardActions from '../actions/rankBoardActions';
 import * as routeConstants from '../constants/routeConstants';
+import {setDataInSessionStorage} from '../store/sessionStorage';
 import {getApplicationSessionFromState} from '../selectors/applicationSessionSelector';
 import {getRankBoardsFromState} from '../selectors/rankBoardsSelector';
 
@@ -24,13 +25,24 @@ class ApplicationContainer extends React.Component {
     }
 
     componentWillMount() {
-        this.props.sessionActions.getNewSession();
+        //this.props.sessionActions.startNewSession();
+        let urlParams = new URLSearchParams(window.location.search);
+        const socketPort = urlParams.get('sp');
+        if(socketPort) {
+            setDataInSessionStorage({
+                socketPort: socketPort
+            });
+        }
+        const {applicationSession} = this.props;
+        if(applicationSession && applicationSession.sessionStarted) {
+            this.props.router.push(routeConstants.RANK_BOARDS);
+        } else {
+            this.props.router.push(routeConstants.HOME);
+        }
     }
 
     componentDidMount() {
-        //you can change this to dynamically pass in a route, e.g. when the app refreshes to bring the
-        //user back to the page they were on...store the location in sessionState and pass it as the arg
-        this.props.router.push(routeConstants.RANK_BOARDS);
+
     }
 
     updateSessionState(e) {
@@ -86,6 +98,7 @@ class ApplicationContainer extends React.Component {
     render() {
         return (<Application
             component={this._getChildComponent()}
+            applicationSession={this.props.applicationSession}
         />);
     }
 }
@@ -117,11 +130,10 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-const ConnectedApplicationContainer = connect(mapStateToProps, mapDispatchToProps)(ApplicationContainer);
-
 export {
     mapStateToProps,
     mapDispatchToProps,
-    ApplicationContainer,
-    ConnectedApplicationContainer as default
+    ApplicationContainer
 };
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApplicationContainer);

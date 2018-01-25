@@ -4,10 +4,45 @@ import io from 'socket.io-client';
 import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
+import {getApplicationSessionFromState} from '../selectors/applicationSessionSelector';
+import {getDataFromSessionStorage} from '../store/sessionStorage';
 
-const port = parseInt(window.location.search.replace('?', ''), 10) || 8000;
+//TODO: this is temp code to just see how two client can communicate and disconnect/reconnect. normally be hardcoded port
+const getPort = () => {
+    let socketPort = getDataFromSessionStorage('socketPort');
+    let urlParams = new URLSearchParams(window.location.search);
+    const sp = urlParams.get('sp');
+    if(!socketPort && sp) {
+        socketPort = sp;
+    } else {
+        socketPort = 8000;
+    }
+    return socketPort;
+};
+
+const port = getPort();
 const socket = io(`http://localhost:${port}`);
 const socketIoMiddleware = createSocketIoMiddleware(socket, "socketio/");
+let store;
+
+const subscribeToConnectionEvent = (cb) => {
+    socket.on('connect', () => cb({
+        connectionState: 'Online',
+        storeState: store.getState(),
+        port
+    }));
+    socket.on('disconnect', () => cb({
+        connectionState: 'Offline',
+        storeState: store.getState(),
+        port
+    }));
+    socket.on('connect_error', () => cb({
+        connectionState: 'Offline',
+        storeState: store.getState(),
+        port
+    }));
+};
+
 
 function configureStoreProd(initialState) {
 
@@ -19,13 +54,13 @@ function configureStoreProd(initialState) {
         thunk
     ];
 
-    const store = createStore(rootReducer, initialState, compose(
+    store = createStore(rootReducer, initialState, compose(
         applyMiddleware(...middlewares)
         )
     );
 
     store.subscribe(() => {
-        console.log('new client state', store.getState());
+        //console.log('new client state', store.getState());
     });
 
     return store;
@@ -45,7 +80,7 @@ function configureStoreDev(initialState) {
     ];
 
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
-    const store = createStore(rootReducer, initialState, composeEnhancers(
+    store = createStore(rootReducer, initialState, composeEnhancers(
         applyMiddleware(...middlewares)
         )
     );
@@ -67,5 +102,9 @@ function configureStoreDev(initialState) {
 
 const configureStore = process.env.NODE_ENV === 'production' ? configureStoreProd : configureStoreDev;
 
+
+export {
+    subscribeToConnectionEvent
+};
 
 export default configureStore;

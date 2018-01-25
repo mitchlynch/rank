@@ -17,7 +17,9 @@ class RankBoardContainer extends React.Component {
         super(props, context);
         //You can still leverage local component state. Useful for things like DOM class manipulation, or other things
         //that don't need to be in your application data state.
-        this.state = {};
+        this.state = {
+            timerExpired: false
+        };
         autoBind(this);
     }
 
@@ -65,6 +67,9 @@ class RankBoardContainer extends React.Component {
         }
     }
 
+    endSession() {
+        this.setState({timerExpired: true})
+    }
 
     render() {
 
@@ -76,6 +81,7 @@ class RankBoardContainer extends React.Component {
             rankBoard={rankBoard}
             addResponse={this.addResponse}
             updateResponse={this.updateResponse}
+            endSession={this.endSession}
         />);
     }
 }

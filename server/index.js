@@ -75,10 +75,33 @@ function createSession({connection, rankSession}) {
 }
 
 function subscribeToBoards({socket, connection}) {
-    r.table('rankboards')
+      r.table('rankboards')
         .changes({ include_initial: true })
         .run(connection, function(err, cursor) {
             cursor.each(function(err, boardRow) {
+                socket.emit('action',
+                    {
+                        type: 'UPDATE_RANKBOARDS',
+                        payload: boardRow.new_val
+                    });
+            });
+        });
+}
+
+function reSubscribeToBoards({socket, connection, lastUpdated}) {
+    let query = null;
+
+    if(lastUpdated) {
+        console.log('query', lastUpdated);
+      query = r.row('timeStamp').ge(new Date(lastUpdated));
+    }
+
+    r.table('rankboards')
+        .filter(query)
+        .changes({ include_initial: true })
+        .run(connection, function(err, cursor) {
+            cursor.each(function(err, boardRow) {
+                console.log('query returned row', boardRow.new_val);
                 socket.emit('action',
                     {
                         type: 'UPDATE_RANKBOARDS',
@@ -102,6 +125,28 @@ function subscribeToResponses({socket, connection}) {
         });
 }
 
+function reSubscribeToResponses({socket, connection, lastUpdated}) {
+    let query = null;
+
+    if(lastUpdated) {
+        query = r.row('timeStamp').ge(new Date(lastUpdated));
+    }
+
+    r.table('responses')
+        .filter(query)
+        .changes({ include_initial: true })
+        .run(connection, function(err, cursor) {
+            cursor.each(function(err, boardRow) {
+                socket.emit('action',
+                    {
+                        type: 'UPDATE_RESPONSES',
+                        payload: boardRow.new_val
+                    });
+            });
+        });
+}
+
+
 r.connect({
     host: 'localhost',
     port: 28015,
@@ -119,6 +164,7 @@ r.connect({
                                 type: 'UPDATE_SESSION',
                                 payload: {
                                     sessionMessage: 'Session started',
+                                    sessionStarted: true,
                                     userName: action.payload.userName
                                 }
                             });
@@ -147,11 +193,21 @@ r.connect({
                     break;
                 case 'socketio/subscribeToBoards':
                     console.log('Received board subscription:', action.payload);
-                    subscribeToBoards({socket, connection});
+                    if(action.payload.lastUpdated) {
+                        reSubscribeToBoards({socket, connection, lastUpdated: action.payload.lastUpdated});
+                    } else {
+                        subscribeToBoards({socket, connection});
+                    }
+
                     break;
                 case 'socketio/subscribeToResponses':
                     console.log('Received response subscription:', action.payload);
-                    subscribeToResponses({socket, connection});
+                    if(action.payload.lastUpdated) {
+                        reSubscribeToResponses({socket, connection,  lastUpdated: action.payload.lastUpdated});
+                    } else {
+                        subscribeToResponses({socket, connection});
+                    }
+
                     break;
                 case 'socketio/sessionUpdate':
                     console.log('Received update session:', action.payload);

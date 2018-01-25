@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router';
+import moment from 'moment';
 
 const RankBoards = ({rankBoards, applicationSession, updateSessionState, createRankBoard}) => {
 
@@ -8,9 +9,12 @@ const RankBoards = ({rankBoards, applicationSession, updateSessionState, createR
         if (rankBoards) {
             const boardIds = Object.keys(rankBoards);
             return boardIds.map((id) => {
+                let boardStartDate = moment(rankBoards[id].timeStamp).format("dddd, MMMM Do YYYY, h:mm a");
                 return (
                     <Link to={`RankBoard/${id}`} className="list-group-item"
-                          key={id}>{rankBoards[id].description}</Link>
+                          key={id}>{rankBoards[id].description}
+                        <p><small>{`Posted by: ${rankBoards[id].owner} on ${boardStartDate}`}</small></p>
+                    </Link>
                 );
             });
         }
@@ -22,12 +26,15 @@ const RankBoards = ({rankBoards, applicationSession, updateSessionState, createR
 
     const _createRankBoard = (e) => {
         e.preventDefault();
-        let data = {
-            description: applicationSession.createRankBoard,
-            duration: applicationSession.rankBoardDuration
-        };
+        if(applicationSession.createRankBoard) {
+            let data = {
+                owner: applicationSession.userName,
+                description: applicationSession.createRankBoard,
+                duration: applicationSession.rankBoardDuration
+            };
 
-        createRankBoard(data);
+            createRankBoard(data);
+        }
     };
 
     const _onEnter = (e) => {
@@ -39,7 +46,16 @@ const RankBoards = ({rankBoards, applicationSession, updateSessionState, createR
     return (
         <div className="panel panel-primary">
             <div className="panel-heading">
-                <h1 className="panel-title">Welcome to RankBoard!</h1>
+                <h1 className="panel-title">Hi {applicationSession.userName}, welcome to RankBoard!</h1>
+            </div>
+            <div style={{margin:"20px"}}>
+                <h4>To get started, select a duration for your board (in minutes) and enter a detailed
+                    description of the problem/idea/challenge and click the Create RankBoard button to start the session.
+                </h4>
+                <br />
+                <h4>
+                    You can also select a board from the list below to add your own responses to.
+                </h4>
             </div>
             <div className="panel-body">
                 <form className="form-horizontal">
