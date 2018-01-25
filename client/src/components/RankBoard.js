@@ -99,7 +99,7 @@ const RankBoard = ({applicationSession, rankBoard, responses, updateSessionState
             if (document.getElementById('response-' + response.id) && orderedResponseList[0] &&
                 response.id === orderedResponseList[0].id && response.upVote > 0) {
                 pulseMarkup = (
-                    <img style={{marginLeft: "10px", marginTop: "-8px"}} src="../assets/img/check-mark.png"/>);
+                    <img style={{marginLeft: "10px", marginTop: "-8px"}} src="../assets/img/trophy.png"/>);
                 document.getElementById('response-' + response.id).className = 'winningResponse';
                 document.getElementById('responseForm').classList.add('hide');
             }
