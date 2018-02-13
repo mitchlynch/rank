@@ -1,6 +1,6 @@
 # rank
 Example app with React, Redux, and Socket.io.  Heavily borrowed from
-the github project [https://github.com/hendrikswan/realtime-rethink-lessons]
+the github project https://github.com/hendrikswan/realtime-rethink-lessons.
 Thanks Hendrik!
 
 # Prerequisites
