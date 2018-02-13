@@ -4,7 +4,6 @@ the github project [https://github.com/hendrikswan/realtime-rethink-lessons]
 Thanks Hendrik!
 
 
-
 # Prerequisites
 node.js/NPM
 yarn is recommended
