@@ -1,5 +1,9 @@
 # rank
-Example app with React, Redux, and Socket.io 
+Example app with React, Redux, and Socket.io.  Heavily borrowed from
+the github project [https://github.com/hendrikswan/realtime-rethink-lessons]
+Thanks Hendrik!
+
+
 
 # Prerequisites
 node.js/NPM
