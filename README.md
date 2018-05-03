@@ -40,7 +40,7 @@ $ yarn start
 
 Default client web server will run on http://localhost:8090
 
-To start the server, open a second terminal and change to the /server directory.
+To start the server, open a second terminal and within the project change to the /server directory.
 Type:
 
 ```
@@ -57,7 +57,7 @@ $ yarn start 8888
 # Default Application Launch
 After you run a npm start you can browse to http://localhost:8090 to load the app.
 
-* Note if started the server at a different port than the default, add a query param
+* Note: If you started the server at a different port than the default, add a query param
 to the url, e.g. if your server is at port 8888:
 
 ```
