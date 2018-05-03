@@ -10,32 +10,64 @@ yarn is recommended
 # Installation
 Clone this repository
 
-install dependencies: open a console and run
+Install dependencies: open a console and run
 
 ```
-$ npm install --loglevel info
+$ yarn install (or just type yarn)
 ```
-Note: loglevel only needed for problems during install
+
+# RethinkDB installation
+Go to https://www.rethinkdb.com/ and follow the download install intructions.
+
+Follow instructions for starting the db based on your OS. For Mac users,
+simply open a terminal and type:
 
 ```
-$ yarn install
+$ rethinkdb
 ```
 
 # Workflow
 npm scripts are used to manage the build and execute activities
  
-## NPM Scripts
+## Start the Client And Server
 
-Build the project and start the web server, by default the application will run on http://localhost:8090
+To start the client web server,  open a terminal within the project and change to the /client directory.
+Type:
 
 ```
-$ npm start -s
+$ yarn start
 ```
 
-Note: saving a file that has been changed will only run lint on that file. You will need to stop the server and rerun `npm start` for all of the files to be linted.
+Default client web server will run on http://localhost:8090
 
+To start the server, open a second terminal and change to the /server directory.
+Type:
+
+```
+$ yarn start
+```
+
+The default port is 8000, however you can start the server on any port you wish by adding an argument to console command,
+e.g.
+
+```
+$ yarn start 8888
+```
 
 # Default Application Launch
-After you run a npm start you can browse to http://localhost:8090 to load the app
+After you run a npm start you can browse to http://localhost:8090 to load the app.
+
+* Note if started the server at a different port than the default, add a query param
+to the url, e.g. if your server is at port 8888:
+
+```
+http://localhost:8090?sp=8888
+```
+
+Running multiple servers on different ports allows you to open multiple tabs in
+your browser and test the app with "multiple" users.  You can also test connecting/
+disconnecting to the app and re-sync by shutting down one of the server instances,
+adding new data to the "working" app, then restarting the down server.  You should
+see the data automatically sync in the disconnected app.
 
 # Contributing
