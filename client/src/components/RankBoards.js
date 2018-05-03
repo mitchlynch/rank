@@ -43,10 +43,20 @@ const RankBoards = ({rankBoards, applicationSession, updateSessionState, createR
         }
     };
 
+    const connectionStatusClass = () => {
+        return applicationSession.connectionState === 'Online' ? "label label-success" : "label label-danger";
+    };
+
+    const connectionStatus = () => {
+        return applicationSession.connectionState === 'Online' ? "Online" : "Offline";
+    };
+
     return (
+        <div>
+            <h4><span style={{margin: "9px", float: "right"}} className={connectionStatusClass()}>Status: {connectionStatus()}</span></h4>
         <div className="panel panel-primary">
             <div className="panel-heading">
-                <h1 className="panel-title">Hi {applicationSession.userName}, welcome to RankBoard!</h1>
+                <h1 className="panel-title">Hi {applicationSession.userName}, welcome to Rank!</h1>
             </div>
             <div style={{margin:"20px"}}>
                 <h4>To get started, select a duration for your board (in minutes) and enter a detailed
@@ -102,7 +112,7 @@ const RankBoards = ({rankBoards, applicationSession, updateSessionState, createR
                     </div>
                 </div>
             </div>
-
+        </div>
         </div>
     );
 };

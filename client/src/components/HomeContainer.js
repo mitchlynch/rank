@@ -5,7 +5,9 @@ import autoBind from 'react-autobind';
 import {bindActionCreators} from 'redux';
 import * as sessionActions from '../actions/sessionActions';
 import {getApplicationSessionFromState} from '../selectors/applicationSessionSelector';
+import {setDataInSessionStorage} from '../store/sessionStorage';
 import Home from './Home';
+import Connection from './Connection';
 
 
 class HomeContainer extends React.Component {
@@ -13,9 +15,7 @@ class HomeContainer extends React.Component {
     constructor(props, context) {
         super(props, context);
 
-        this.state = {
-
-        };
+        this.state = {};
 
         autoBind(this);
     }
@@ -39,17 +39,27 @@ class HomeContainer extends React.Component {
     }
 
     login(data) {
+        setDataInSessionStorage({
+            rankSession: {userName: this.props.applicationSession.userName}
+        });
         this.props.sessionActions.startNewSession(data);
     }
 
     render() {
 
         const {applicationSession} = this.props;
-        return (<Home
-            applicationSession={applicationSession}
-            updateSessionState={this.updateSessionState}
-            login={this.login}
-        />);
+        return (
+            <div>
+                <Connection
+                    applicationSession={applicationSession}
+                />
+                <Home
+                    applicationSession={applicationSession}
+                    updateSessionState={this.updateSessionState}
+                    login={this.login}
+                />
+            </div>
+        );
     }
 }
 

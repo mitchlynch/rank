@@ -101,7 +101,7 @@ function reSubscribeToBoards({socket, connection, lastUpdated}) {
         .changes({ include_initial: true })
         .run(connection, function(err, cursor) {
             cursor.each(function(err, boardRow) {
-                console.log('query returned row', boardRow.new_val);
+                console.log('resubscribe boards: query returned row', boardRow.new_val);
                 socket.emit('action',
                     {
                         type: 'UPDATE_RANKBOARDS',
@@ -137,6 +137,7 @@ function reSubscribeToResponses({socket, connection, lastUpdated}) {
         .changes({ include_initial: true })
         .run(connection, function(err, cursor) {
             cursor.each(function(err, boardRow) {
+                console.log('resubscribe responses: query returned row', boardRow.new_val);
                 socket.emit('action',
                     {
                         type: 'UPDATE_RESPONSES',
@@ -157,7 +158,7 @@ r.connect({
         socket.on('action', (action) => {
             switch (action.type) {
                 case 'socketio/sessionStart':
-                    console.log('Received session start:', action.payload);
+                    // console.log('Received session start:', action.payload);
                     createSession({connection, rankSession: action.payload}).then((result) => {
                         socket.emit('action',
                             {
@@ -210,7 +211,7 @@ r.connect({
 
                     break;
                 case 'socketio/sessionUpdate':
-                    console.log('Received update session:', action.payload);
+                    // console.log('Received update session:', action.payload);
                     socket.emit('action',
                         {
                             type: 'UPDATE_SESSION',
@@ -219,8 +220,9 @@ r.connect({
                             }
                         });
                     break;
+
                 case 'socketio/createRankBoard':
-                    console.log('Received create rankboard:', action.payload);
+                    // console.log('Received create rankboard:', action.payload);
                     createRankBoard({connection, rankBoard: action.payload});
                     // createRankBoard({connection, rankBoard: action.payload}).then((result) => {
                     //     socket.emit('action',
@@ -231,7 +233,7 @@ r.connect({
                     // });
                     break;
                 case 'socketio/updateRankBoard':
-                    console.log('Received update rankboard:', action.payload);
+                    // console.log('Received update rankboard:', action.payload);
                     socket.emit('action',
                         {
                             type: 'UPDATE_RANKBOARDS',
@@ -239,7 +241,7 @@ r.connect({
                         });
                     break;
                 case 'socketio/addResponse':
-                    console.log('Received add response:', action.payload);
+                    // console.log('Received add response:', action.payload);
                     addResponse({connection, response: action.payload});
                     //     .then((result) => {
                     //     socket.emit('action',
@@ -250,7 +252,7 @@ r.connect({
                     // });
                     break;
                 case 'socketio/updateResponse':
-                    console.log('Received update response:', action.payload);
+                    // console.log('Received update response:', action.payload);
                     updateResponse({connection, response: action.payload});
                     //     .then((result) => {
                     //     socket.emit('action',

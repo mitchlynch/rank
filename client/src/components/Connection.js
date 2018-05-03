@@ -6,11 +6,10 @@ const Connection = ({applicationSession}) => {
 
     const getContent = () => {
         let content = null;
-console.log(applicationSession);
-        if (applicationSession.connectionState === 'Offline') {
+        if (applicationSession.connectionState === 'Offline' || applicationSession.connectionState === 'Error') {
             content = (
                 <div className="alert alert-danger">
-                    OFFLINE Socket port: {applicationSession.port}
+                    <b>Hmmm...looks like we can't connect...retrying...</b> Application Status: OFFLINE Socket port: {applicationSession.port}
                 </div>
 
             );
@@ -27,7 +26,7 @@ console.log(applicationSession);
         if (applicationSession.connectionState === 'Online') {
             content = (
                 <div className="alert alert-success">
-                    ONLINE Socket port: {applicationSession.port}
+                    <b>Welcome to Rank!</b> Application Status: ONLINE Socket port: {applicationSession.port}
                 </div>
             );
         }

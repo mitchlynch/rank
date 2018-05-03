@@ -24,7 +24,8 @@
   },
   "rules": {
     "quotes": "off",
-    "no-console": ["warn", {"allow": ["warn", "error"]}],
+    // "no-console": ["warn", {"allow": ["warn", "error"]}],
+    "no-console": ["off"],
     "no-debugger": "warn",
     "no-var": "error",
     "semi": ["warn", "always"],

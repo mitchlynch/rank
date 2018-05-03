@@ -46,6 +46,7 @@ const startNewSession = (data) => {
 
 const reconnectSession = (lastUpdated) => {
     return (dispatch) => {
+        console.log('reconnect session!!!!!');
         dispatch(
             {
                 type: 'socketio/subscribeToBoards',
@@ -68,8 +69,14 @@ const reconnectSession = (lastUpdated) => {
 
 const updateConnectionStatus = (data) => {
     return (dispatch, getState) => {
+        let appSessionState = getApplicationSessionFromState(getState());
         if(data.connectionState === 'Offline') {
             data.lastUpdated = moment().unix();
+        }
+
+        if(data.connectionState === 'Online' && appSessionState.attemptReconnect) {
+            dispatch(reconnectSession(data.lastUpdated));
+            data.attemptReconnect = false;
         }
 
         return dispatch(updateSessionState(data));

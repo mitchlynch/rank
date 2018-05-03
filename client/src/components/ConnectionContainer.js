@@ -7,32 +7,22 @@ import * as sessionActions from '../actions/sessionActions';
 import {getApplicationSessionFromState} from '../selectors/applicationSessionSelector';
 import {subscribeToConnectionEvent} from '../store/configureStore';
 import Connection from './Connection';
-import moment from 'moment';
 
 class ConnectionContainer extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         autoBind(this);
-
         subscribeToConnectionEvent(({connectionState, storeState, port}) => {
-            console.log('storestate', storeState);
             let applicationSession = getApplicationSessionFromState(storeState);
             let connectionData = {
                 connectionState: connectionState || 'connecting',
                 lastUpdated: applicationSession.lastUpdated,
                 port: port
             };
-console.log('connectionData', connectionData);
-            // if(connectionState === 'Offline') {
-            //     connectionData.lastUpdated = moment().unix();
-            // }
 
-            if(connectionState === 'Online' && applicationSession.lastUpdated) {
-                //re-subscribe to board updates
-                console.log('resubscribing...', applicationSession.lastUpdated);
-                connectionData.lastUpdated = undefined;
-                sessionActions.reconnectSession(applicationSession.lastUpdated);
+            if (connectionState === 'Error') {
+                connectionData.attemptReconnect = true;
             }
 
             this.props.sessionActions.updateConnectionStatus(connectionData);
@@ -44,6 +34,10 @@ console.log('connectionData', connectionData);
     }
 
     componentDidMount() {
+
+    }
+
+    componentWillUpdate() {
 
     }
 

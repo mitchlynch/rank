@@ -18,8 +18,7 @@ add your own styles
 
 .boardTimer {
     font-size: 20px;
-    margin: 10px;
-    float: right;
+    margin-left: 10px;
 }
 
 .logoImg {

@@ -21,8 +21,8 @@ const getPort = () => {
 };
 
 const port = getPort();
-const socket = io(`http://localhost:${port}`);
-const socketIoMiddleware = createSocketIoMiddleware(socket, "socketio/");
+const socket = io(`http://localhost:${port}`, { forceNew: true });
+const socketIoMiddleware = createSocketIoMiddleware(socket, 'socketio/');
 let store;
 
 const subscribeToConnectionEvent = (cb) => {
@@ -36,8 +36,13 @@ const subscribeToConnectionEvent = (cb) => {
         storeState: store.getState(),
         port
     }));
+    socket.on('reconnect', () => ({
+        connectionState: 'Reconnect',
+        storeState: store.getState(),
+        port
+    }));
     socket.on('connect_error', () => cb({
-        connectionState: 'Offline',
+        connectionState: 'Error',
         storeState: store.getState(),
         port
     }));

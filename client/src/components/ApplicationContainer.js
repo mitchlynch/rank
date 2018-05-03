@@ -7,9 +7,10 @@ import Application from './Application';
 import * as sessionActions from '../actions/sessionActions';
 import * as rankBoardActions from '../actions/rankBoardActions';
 import * as routeConstants from '../constants/routeConstants';
-import {setDataInSessionStorage} from '../store/sessionStorage';
+import {getDataFromSessionStorage, setDataInSessionStorage} from '../store/sessionStorage';
 import {getApplicationSessionFromState} from '../selectors/applicationSessionSelector';
 import {getRankBoardsFromState} from '../selectors/rankBoardsSelector';
+import {subscribeToConnectionEvent} from "../store/configureStore";
 
 
 class ApplicationContainer extends React.Component {
@@ -22,10 +23,24 @@ class ApplicationContainer extends React.Component {
 
         };
         autoBind(this);
+
+        subscribeToConnectionEvent(({connectionState, storeState, port}) => {
+            let applicationSession = getApplicationSessionFromState(storeState);
+            let connectionData = {
+                connectionState: connectionState || 'connecting',
+                lastUpdated: applicationSession.lastUpdated,
+                port: port
+            };
+
+            if (connectionState === 'Error') {
+                connectionData.attemptReconnect = true;
+            }
+
+            this.props.sessionActions.updateConnectionStatus(connectionData);
+        });
     }
 
     componentWillMount() {
-        //this.props.sessionActions.startNewSession();
         let urlParams = new URLSearchParams(window.location.search);
         const socketPort = urlParams.get('sp');
         if(socketPort) {
@@ -34,8 +49,13 @@ class ApplicationContainer extends React.Component {
             });
         }
         const {applicationSession} = this.props;
-        if(applicationSession && applicationSession.sessionStarted) {
+        const rankSession = getDataFromSessionStorage('rankSession');
+        if(applicationSession && rankSession && rankSession.userName) {
             this.props.router.push(routeConstants.RANK_BOARDS);
+            let data = {
+                userName: rankSession.userName
+            };
+            this.props.sessionActions.startNewSession(data);
         } else {
             this.props.router.push(routeConstants.HOME);
         }

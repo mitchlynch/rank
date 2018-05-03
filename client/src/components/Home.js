@@ -25,8 +25,8 @@ const Home = ({applicationSession, updateSessionState, login}) => {
     return (
         <div>
             <div className="jumbotron">
-                <h2>So you have found RankBoard...now what?</h2>
-                <div>RankBoard allows you to create a virtual board where you can ask a question, post a problem, share an
+                <h2>So you have found Rank...now what?</h2>
+                <div>Rank allows you to create a virtual board where you can ask a question, post a problem, share an
                     idea, or any other thing you would like feedback on. The key feature of RankBoard is that you set a timer
                     (in minutes) for people to post feedback/ideas/answers to your board. As people provide feedback to
                     your board, other people can "up vote" the response by clicking the numeric counter next to each
@@ -45,6 +45,7 @@ const Home = ({applicationSession, updateSessionState, login}) => {
                 <div className="form-group">
                     <label htmlFor="userName">Username</label>
                     <input
+                        style={{width:"40%"}}
                         type="text"
                         name="userName"
                         value={applicationSession.userName || ''}

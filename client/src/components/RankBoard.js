@@ -181,19 +181,29 @@ const RankBoard = ({applicationSession, rankBoard, responses, updateSessionState
         }
     };
 
+    const connectionStatusClass = () => {
+        return applicationSession.connectionState === 'Online' ? "label label-success" : "label label-danger";
+    };
+
+    const connectionStatus = () => {
+        return applicationSession.connectionState === 'Online' ? "Online" : "Offline";
+    };
+
     return (
         <div style={rankBoardStyle} id="rankBoard">
+            <h4 style={{color: "darkred", margin: "9px", float: "left"}}>
+                Time Remaining :
+                        <span style={{marginLeft: "10px"}}>
+                            <span id="timer" className=""/>
+                             {_setTimer()}
+                        </span>
+            </h4>
+            <h4><span style={{margin: "9px", float: "right"}} className={connectionStatusClass()}>Status: {connectionStatus()}</span></h4>
             <div className="panel-body">
                 <div className="row">
                     <div className="col-xs-12 col-sm-8 col-md-10">
                         <span className="boardDescription">
                             <span className="lead">{rankBoard.description}</span>
-                        </span>
-                    </div>
-                    <div className="col-xs-4 col-md-2">
-                        <span className="boardTimer">
-                            <span id="timer" className="label label-success"/>
-                            {_setTimer()}
                         </span>
                     </div>
                 </div>

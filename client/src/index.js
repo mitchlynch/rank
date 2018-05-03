@@ -9,11 +9,13 @@ import {loadReduxState, setDataInSessionStorage} from './store/sessionStorage';
 import throttle from 'lodash/throttle';
 import registerServiceWorker from './registerServiceWorker';
 
-const reduxState = loadReduxState();
-const store = configureStore(reduxState);
+//const reduxState = loadReduxState();
+const store = configureStore();
 // store.subscribe(throttle(() => {
 //     setDataInSessionStorage({
-//         reduxState: store.getState()
+//         rankSession: {
+//             userName: store.getState().applicationSession.userName
+//         }
 //     });
 // }, 1000));
 

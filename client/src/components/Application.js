@@ -5,9 +5,6 @@ import ConnectedConnectionContainer from './ConnectionContainer';
 const Application = ({component, applicationSession}) => {
     return (
         <div className="container-fluid">
-            <ConnectedConnectionContainer
-                applicationSession={applicationSession}
-            />
             {component}
         </div>
     );
